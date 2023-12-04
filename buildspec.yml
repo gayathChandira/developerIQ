@@ -4,7 +4,8 @@ phases:
   pre_build:
     commands:
       - echo "Installing Maven..."
-      - apt-get install -y maven
+      - sudo yum update -y
+      - sudo yum install -y maven
       - ECR_REPO_URL=public.ecr.aws/v8y8p2w5/developeriq
   build:
     commands:
