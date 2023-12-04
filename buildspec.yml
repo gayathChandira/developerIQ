@@ -1,9 +1,18 @@
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      java: openjdk17
+    commands:
+      - echo "Installing Java 17..."
+      - yum update -y && yum install -y java-17-jdk
+      - echo "Java 17 installed."
+
   pre_build:
     commands:
       - echo "Installing Maven..."
+      - java -version
       - mvn -v
       - ECR_REPO_URL=public.ecr.aws/v8y8p2w5/developeriq
   build:
@@ -14,7 +23,7 @@ phases:
     commands:
       - echo "Building Docker Image..."
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
-      - docker build -t $ECR_REPO_URL:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
+      - docker build -t public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION .
       - echo "Pushing Docker Image to ECR..."
-      - docker push $ECR_REPO_URL:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION
