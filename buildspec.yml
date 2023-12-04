@@ -4,6 +4,8 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+    commands:
+      - CODEBUILD_RESOLVED_SOURCE_VERSION=$(git rev-parse HEAD)
   pre_build:
     commands:
       - java -version
