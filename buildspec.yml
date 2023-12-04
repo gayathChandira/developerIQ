@@ -3,15 +3,9 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: openjdk17
-    commands:
-      - echo "Installing Java 17..."
-      - yum update -y && yum install -y java-17-jdk
-      - echo "Java 17 installed."
-
+      java: corretto17
   pre_build:
     commands:
-      - echo "Installing Maven..."
       - java -version
       - mvn -v
       - ECR_REPO_URL=public.ecr.aws/v8y8p2w5/developeriq
