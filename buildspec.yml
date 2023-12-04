@@ -17,7 +17,7 @@ phases:
     commands:
       - echo "Building Docker Image..."
       - echo "Logging in to Amazon ECR..."
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
       - docker build -t public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION .
       - echo "Pushing Docker Image to ECR..."
       - docker push $public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION
