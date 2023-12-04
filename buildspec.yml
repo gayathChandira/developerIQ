@@ -4,8 +4,6 @@ phases:
   install:
     runtime-versions:
       java: corretto17
-    commands:
-      - CODEBUILD_RESOLVED_SOURCE_VERSION=$(git rev-parse HEAD)
   pre_build:
     commands:
       - java -version
@@ -20,6 +18,7 @@ phases:
       - echo "Building Docker Image..."
       - echo "Logging in to Amazon ECR..."
       - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
-      - docker build -t public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker build -t public.ecr.aws/v8y8p2w5/developeriq:latest .
       - echo "Pushing Docker Image to ECR..."
-      - docker push $public.ecr.aws/v8y8p2w5/developeriq:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - docker push $public.ecr.aws/v8y8p2w5/developeriq:latest
+      - echo "resolved version $CODEBUILD_RESOLVED_SOURCE_VERSION"
