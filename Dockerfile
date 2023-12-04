@@ -1,5 +1,5 @@
 # Use an official OpenJDK runtime as a parent image
-FROM amazoncorretto:17-jdk-slim
+FROM public.ecr.aws/z8p2n0n3/amazon-corretto-17:latest
 
 # Set the working directory to /app
 WORKDIR /app
