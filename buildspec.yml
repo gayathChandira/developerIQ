@@ -4,11 +4,28 @@ phases:
   install:
     runtime-versions:
       java: corretto17
+    commands:
+      - echo Installing app dependencies...
+      - curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.18.9/2020-11-02/bin/linux/amd64/kubectl
+      - chmod +x ./kubectl
+      - mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+      - echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+      - source ~/.bashrc
+      - echo 'Check kubectl version'
+      - kubectl version --short --client
   pre_build:
     commands:
       - java -version
       - mvn -v
       - ECR_REPO_URL=public.ecr.aws/v8y8p2w5/developeriq
+      - echo Logging in to Amazon EKS...
+      - aws eks --region us-east-1 update-kubeconfig --name iit-eks
+      - echo check config
+      - kubectl config view --minify
+      - echo check kubectl access
+      - kubectl get svc
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
   build:
     commands:
       - echo "Building Spring Boot Application..."
@@ -16,9 +33,13 @@ phases:
   post_build:
     commands:
       - echo "Building Docker Image..."
-      - echo "Logging in to Amazon ECR..."
-      - aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v8y8p2w5/developeriq
       - docker build -t public.ecr.aws/v8y8p2w5/developeriq:latest .
+      - docker tag developeriq:latest public.ecr.aws/v8y8p2w5/developeriq:latest
       - echo "Pushing Docker Image to ECR..."
       - docker push public.ecr.aws/v8y8p2w5/developeriq:latest
       - echo "resolved version $CODEBUILD_RESOLVED_SOURCE_VERSION"
+      - echo "Push the latest image to cluster"
+      - kubectl apply -f cicd/deployment.yaml
+      - kubectl rollout restart -f cicd/deployment.yaml
+      - echo "Expose the service"
+      - kubectl apply -f cicd/service.yaml

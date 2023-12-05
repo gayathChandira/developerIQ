@@ -1,0 +1,13 @@
+# Service YAML
+apiVersion: v1
+kind: Service
+metadata:
+  name: developer-iq-service
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: LoadBalancer
