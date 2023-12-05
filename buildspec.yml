@@ -34,7 +34,6 @@ phases:
     commands:
       - echo "Building Docker Image..."
       - docker build -t public.ecr.aws/v8y8p2w5/developeriq:latest .
-      - docker tag developeriq:latest public.ecr.aws/v8y8p2w5/developeriq:latest
       - echo "Pushing Docker Image to ECR..."
       - docker push public.ecr.aws/v8y8p2w5/developeriq:latest
       - echo "resolved version $CODEBUILD_RESOLVED_SOURCE_VERSION"
