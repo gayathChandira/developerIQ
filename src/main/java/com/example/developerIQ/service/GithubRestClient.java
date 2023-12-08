@@ -22,11 +22,13 @@ import java.util.*;
 @Service
 public class GithubRestClient {
 
+    MetricService metricService;
     private static RestTemplate restTemplate = null;
     private static ObjectMapper mapper = new ObjectMapper();
 
-    public GithubRestClient(RestTemplate restTemplate) {
+    public GithubRestClient(RestTemplate restTemplate, MetricService metricService) {
         this.restTemplate = restTemplate;
+        this.metricService = metricService;
     }
 
     public static Long getCommitCount(String username) {
@@ -104,6 +106,14 @@ public class GithubRestClient {
             pullRequests.addAll(restTemplate.getForObject(url1, List.class));
         }
         return (long) pullRequests.size();
+    }
+
+    public double getFollowersCount(String userName){
+        String url = "https://api.github.com/users/" + userName + "/followers";
+        addAuthorizationHeader(restTemplate);
+        List<Objects> followers = restTemplate.getForObject(url, List.class);
+        assert followers != null;
+        return (long) followers.size();
     }
 
     private static void addAuthorizationHeader(RestTemplate restTemplate) {

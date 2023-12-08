@@ -18,6 +18,6 @@ public class IqStore {
     private String userName;
     private Double avgCommit;
     private Double pullCount;
-    private Double issueCount;
+    private Double followersCount;
     private Double iq;
 }
