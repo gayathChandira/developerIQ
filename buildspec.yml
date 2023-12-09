@@ -17,6 +17,9 @@ phases:
     commands:
       - java -version
       - mvn -v
+      - echo Aws Credentials
+      - echo $AWS_ACCESS_KEY_ID
+      - echo $AWS_SECRET_ACCESS_KEY
       - ECR_REPO_URL=public.ecr.aws/v8y8p2w5/developeriq
       - echo Logging in to Amazon EKS...
       - aws eks --region us-east-1 update-kubeconfig --name iit-eks
