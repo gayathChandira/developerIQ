@@ -21,23 +21,6 @@ public class AwsParameterStoreConfig {
     @Value("${AWS_SECRET_ACCESS_KEY}")
     private String secretKey;
 
-    @Autowired
-    private AwsCredentialsProvider awsCredentialsProvider;
-
-    @Autowired
-    private SsmClient ssmClient;
-
-    public AwsParameterStoreConfig(
-            @Value("${AWS_ACCESS_KEY_ID}") String accessKey,
-            @Value("${AWS_SECRET_ACCESS_KEY}") String secretKey,
-            AwsCredentialsProvider awsCredentialsProvider,
-            SsmClient ssmClient) {
-        this.accessKey = accessKey;
-        this.secretKey = secretKey;
-        this.awsCredentialsProvider = awsCredentialsProvider;
-        this.ssmClient = ssmClient;
-    }
-
     @Bean
     public AwsCredentialsProvider awsCredentialsProvider() {
         return StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey));
@@ -46,12 +29,16 @@ public class AwsParameterStoreConfig {
     @Bean
     public SsmClient ssmClient(AwsCredentialsProvider awsCredentialsProvider) {
         return SsmClient.builder()
-                .region(Region.US_EAST_1)
                 .credentialsProvider(awsCredentialsProvider)
                 .build();
     }
 
-    public String dbRetreiverUrl() {
+    public String dbRetreiverUrl(AwsCredentialsProvider awsCredentialsProvider) {
+        SsmClient ssmClient = SsmClient.builder()
+                .region(Region.US_EAST_1)
+                .credentialsProvider(awsCredentialsProvider)
+                .build();
+
         GetParameterRequest parameterRequest = GetParameterRequest.builder()
                 .name("/developeriq/db-retreival-url")
                 .build();
@@ -59,5 +46,5 @@ public class AwsParameterStoreConfig {
         GetParameterResponse parameterResponse = ssmClient.getParameter(parameterRequest);
         return parameterResponse.parameter().value();
     }
-}
 
+}

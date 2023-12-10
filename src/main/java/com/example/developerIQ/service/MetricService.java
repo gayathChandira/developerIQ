@@ -4,9 +4,11 @@ import com.example.developerIQ.config.AwsParameterStoreConfig;
 import com.example.developerIQ.dao.IqStore;
 import com.example.developerIQ.model.Commit;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +21,8 @@ import java.util.Calendar;
 @Service
 public class MetricService {
 
-
+    @Autowired
+    AwsCredentialsProvider awsCredentialsProvider;
     private final RestTemplate restTemplate;
     private String dbRetreiverUrl;
     private final AwsParameterStoreConfig awsParameterStoreConfig;
@@ -70,7 +73,7 @@ public class MetricService {
     }
 
     public void sendDataToDbRetreiver(IqStore iqStore){
-        dbRetreiverUrl = awsParameterStoreConfig.dbRetreiverUrl();
+        dbRetreiverUrl = awsParameterStoreConfig.dbRetreiverUrl(awsCredentialsProvider);
         String url = dbRetreiverUrl + "/save";
         restTemplate.postForObject(url,iqStore,Void.class);
     }
