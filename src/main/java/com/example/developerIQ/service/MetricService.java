@@ -1,5 +1,6 @@
 package com.example.developerIQ.service;
 
+import com.example.developerIQ.config.AwsParameterStoreConfig;
 import com.example.developerIQ.dao.IqStore;
 import com.example.developerIQ.model.Commit;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -20,13 +21,14 @@ public class MetricService {
 
 
     private final RestTemplate restTemplate;
-    private final String dbRetreiverUrl;
+    private String dbRetreiverUrl;
+    private final AwsParameterStoreConfig awsParameterStoreConfig;
     private static final double WEIGHT_AVERAGE_COMMIT = 0.4;
     private static final double WEIGHT_PULL_REQUESTS = 0.3;
     private static final double WEIGHT_FOLLOWERS = 0.3;
-    public MetricService(RestTemplate restTemplate, @Value("#{dbRetreiverUrl}") String dbRetreiverUrl) {
-        this.dbRetreiverUrl = dbRetreiverUrl;
+    public MetricService(RestTemplate restTemplate, AwsParameterStoreConfig awsParameterStoreConfig) {
         this.restTemplate = restTemplate;
+        this.awsParameterStoreConfig = awsParameterStoreConfig;
     }
 
     private Map<String, Integer> getCommitsPerWeek(List<Commit> commits) {
@@ -68,6 +70,7 @@ public class MetricService {
     }
 
     public void sendDataToDbRetreiver(IqStore iqStore){
+        dbRetreiverUrl = awsParameterStoreConfig.dbRetreiverUrl();
         String url = dbRetreiverUrl + "/save";
         restTemplate.postForObject(url,iqStore,Void.class);
     }
