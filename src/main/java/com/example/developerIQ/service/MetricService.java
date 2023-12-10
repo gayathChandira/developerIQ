@@ -74,7 +74,7 @@ public class MetricService {
 
     public void sendDataToDbRetreiver(IqStore iqStore){
         dbRetreiverUrl = awsParameterStoreConfig.dbRetreiverUrl(awsCredentialsProvider);
-        String url = dbRetreiverUrl + "/save";
+        String url = "http://" +dbRetreiverUrl + "/save";
         restTemplate.postForObject(url,iqStore,Void.class);
     }
 
