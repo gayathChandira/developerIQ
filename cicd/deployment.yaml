@@ -1,0 +1,25 @@
+# Deployment YAML for EKS with ECR
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: developer-iq
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: developer-iq-container
+          image: public.ecr.aws/v8y8p2w5/developeriq:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: AWS_ACCESS_KEY_ID
+              value: key_id
+            - name: AWS_SECRET_ACCESS_KEY
+              value: secret_access_key
